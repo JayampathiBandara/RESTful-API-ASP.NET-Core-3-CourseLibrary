@@ -31,7 +31,8 @@ namespace CourseLibrary.API.Controllers
         {
             if (!_courseLibraryRepository.AuthorExists(authorId))
             {
-                return NotFound();
+                throw new Exception("Course not found");
+                //return NotFound();
             }
 
             var coursesForAuthorFromRepo = _courseLibraryRepository.GetCourses(authorId);
