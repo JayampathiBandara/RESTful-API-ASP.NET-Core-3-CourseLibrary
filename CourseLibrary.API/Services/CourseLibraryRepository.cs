@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Entities;
+using CourseLibrary.API.ResourceParameters;
 
 namespace CourseLibrary.API.Services
 {
@@ -83,6 +84,41 @@ namespace CourseLibrary.API.Services
 
             return _context.Authors.FirstOrDefault(a => a.Id == authorId);
 
+        }
+        public IEnumerable<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
+        {
+            if (authorsResourceParameters == null)
+            {
+                throw new ArgumentNullException(nameof(authorsResourceParameters));
+            }
+
+            if (string.IsNullOrWhiteSpace(authorsResourceParameters.MainCategory)
+                 && string.IsNullOrWhiteSpace(authorsResourceParameters.SearchQuery))
+            {
+                return GetAuthors();
+            }
+
+            var collection = _context.Authors as IQueryable<Author>;
+
+            //MainCategory is a specific column name and we will check it only in that column
+            if (!string.IsNullOrWhiteSpace(authorsResourceParameters.MainCategory))
+            {
+                var mainCategory = authorsResourceParameters.MainCategory.Trim();
+                collection = collection.Where(a => a.MainCategory == mainCategory);
+            }
+
+            // Search query value could be anything and we should check it in all possible column.
+            // search qy=uery doesn't contain specific column name
+            if (!string.IsNullOrWhiteSpace(authorsResourceParameters.SearchQuery))
+            {
+
+                var searchQuery = authorsResourceParameters.SearchQuery.Trim();
+                collection = collection.Where(a => a.MainCategory.Contains(searchQuery)
+                    || a.FirstName.Contains(searchQuery)
+                    || a.LastName.Contains(searchQuery));
+            }
+
+            return collection.ToList();
         }
 
         public IEnumerable<Author> GetAuthors()
