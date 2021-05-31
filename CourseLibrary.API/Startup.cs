@@ -22,7 +22,12 @@ namespace CourseLibrary.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(setupAction =>
+            {
+                // if controller is not supported for "Accept Header", It will return 406 Status Code
+                setupAction.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
+            
             services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
             services.AddDbContext<CourseLibraryContext>(options =>
             {
