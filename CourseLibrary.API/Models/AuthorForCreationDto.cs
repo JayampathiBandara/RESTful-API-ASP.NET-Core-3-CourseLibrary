@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace CourseLibrary.API.Models
 {
-    public class AuthorForCreationDto
+    public class AuthorForCreationDto : IValidatableObject
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -13,5 +12,14 @@ namespace CourseLibrary.API.Models
         public string MainCategory { get; set; }
         public ICollection<CourseForCreationDto> Courses { get; set; } 
             = new List<CourseForCreationDto>();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if(FirstName == MainCategory)
+            {
+                yield return new ValidationResult("The Provided Firstname Should be different from the MainCategory",
+                    new[] {"AuthorForCreationDto"});// we can give any name. no need to put class name
+            }
+        }
     }
 }
