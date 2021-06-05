@@ -1,9 +1,11 @@
-﻿using System;
+﻿using CourseLibrary.API.ValidationAttributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CourseLibrary.API.Models
 {
+    [FirstNameMustBeDifferentFromLastName(ErrorMessage = "The Provided Firstname Should be different from the LastName")]
     public class AuthorForCreationDto : IValidatableObject
     {
         public string FirstName { get; set; }
