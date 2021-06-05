@@ -74,5 +74,30 @@ namespace CourseLibrary.API.Controllers
                 new { authorId = authorId, courseId = courseToReturn.Id },
                 courseToReturn);
         }
+
+        [HttpPut("{courseId}")]
+        public IActionResult UpdateCourseForAuthor(Guid authorId,
+                Guid courseId,
+                CourseForUpdateDto course)
+        {
+            if (!_courseLibraryRepository.AuthorExists(authorId))
+            {
+                return NotFound();
+            }
+
+            var courseForAuthorFromRepo = _courseLibraryRepository.GetCourse(authorId, courseId);
+            if (courseForAuthorFromRepo == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(course, courseForAuthorFromRepo);
+
+            _courseLibraryRepository.UpdateCourse(courseForAuthorFromRepo);
+            _courseLibraryRepository.Save();
+
+            // this is not use for all API
+            // consumer can decided if he want updated resource from server again.
+            return NoContent();
+        }
     }
 }

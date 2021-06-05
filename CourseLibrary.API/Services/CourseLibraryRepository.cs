@@ -179,7 +179,20 @@ namespace CourseLibrary.API.Services
 
         public void UpdateCourse(Course course)
         {
-            throw new NotImplementedException();
+            /* Here mapper did the update part of that course.
+             *      _mapper.Map(course, courseForAuthorFromRepo);
+            we still need to add that empty method call.   
+                _courseLibraryRepository.UpdateCourse(courseForAuthorFromRepo);
+            Because we expouse IRepository interface and it doesn't know if we have
+            used EF or ADO.NET or any other framework.
+
+            since we impliment IRepository interface, 
+            we need to implement it in EF-Repository with blank body
+
+            in API controller  we need to call it because, i
+            if we change EF-Repository to ADO.NET repository then update will not work
+            https://app.pluralsight.com/library/courses/asp-dot-net-core-3-restful-api-building/discussion#comment-5287410560
+            */
         }
 
         public void Dispose()
