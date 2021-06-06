@@ -86,10 +86,23 @@ namespace CourseLibrary.API.Controllers
             }
 
             var courseForAuthorFromRepo = _courseLibraryRepository.GetCourse(authorId, courseId);
-            if (courseForAuthorFromRepo == null)
+
+            if (courseForAuthorFromRepo == null) //Course not exists in DB
             {
-                return NotFound();
+                var courseToAdd = _mapper.Map<Entities.Course>(course);
+                courseToAdd.Id = courseId; // Assign courseID comes part as URL
+
+                _courseLibraryRepository.AddCourse(authorId, courseToAdd);
+
+                _courseLibraryRepository.Save();
+
+                var courseToReturn = _mapper.Map<CourseDto>(courseToAdd);
+
+                return CreatedAtRoute("GetCourseForAuthor",
+                    new { authorId, courseId = courseToReturn.Id },
+                    courseToReturn);
             }
+
             _mapper.Map(course, courseForAuthorFromRepo);
 
             _courseLibraryRepository.UpdateCourse(courseForAuthorFromRepo);
